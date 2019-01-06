@@ -1,0 +1,2 @@
+TODO LIST:
+- Add intersection points to other way segemnts. Currently does not work if a segment has more than 1 intersection point.
