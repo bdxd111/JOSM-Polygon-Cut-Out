@@ -46,7 +46,7 @@ public class BetterPolygonSplitter {
 		
 		
 		// Remove all polygons which are inside of the foreground polygon
-		// Also remove all which are too small in size. Nessesary due to bugs in the splitting algorithm.
+		// Also remove all which are too small in size. Necessary due to bugs in the splitting algorithm.
 		if (!debug_cuts) {
 			Iterator<MultiPolygon> iterator = resultPolygons.iterator();
 			while (iterator.hasNext()) {
@@ -63,7 +63,7 @@ public class BetterPolygonSplitter {
 		
 //		if (!debug_intersections) {
 		// Remove left over temp tags on intersection nodes.
-		// Should not happen but is nessesary due to bugs in the splitting algorithm not removing them.
+		// Should not happen but is necessary due to bugs in the splitting algorithm not removing them.
 			for (Way w : foreground) {
 				for (Node n : w.getNodes()) {
 					n.remove("temp");
@@ -94,8 +94,8 @@ public class BetterPolygonSplitter {
 		LOGGER.info("Done intersecting...");
 		
 		// Orient the multipolygons ways the correct way. 
-		// The inner ways of the polygons are always oriented oposite of the outer way.
-		// This is done because the algorithm only works if both ways are oriented in oposite directions.
+		// The inner ways of the polygons are always oriented opposite of the outer way.
+		// This is done because the algorithm only works if both ways are oriented in opposite directions.
 		background.setClockwise(commands);
 		foreground.setCounterClockwise(commands);
 		
@@ -242,7 +242,7 @@ public class BetterPolygonSplitter {
 		if (way0.isInner() && way1.isInner()) {
 			LOGGER.info("Splitting type: inner way -> inner way");
 			// Way is outside of polygon to split
-			// FIXME this does not work. seems to behave oposite of what is expected
+			// FIXME this does not work. seems to behave opposite of what is expected
 			// FIXME Need better way of determining if way goes outside.
 			if (polygon.containsNodeInWay(DataUtils.getCenter(node0, node1))) {
 				LOGGER.warning("Split way does not cross polygon to split on the inside");
@@ -311,7 +311,7 @@ public class BetterPolygonSplitter {
 		} else if (way0.isOuter() && way1.isOuter()) {
 			LOGGER.info("Splitting type: outer way -> outer way");
 			// Way is outside of polygon to split
-			// FIXME this does not work. seems to behave oposite of what is expected
+			// FIXME this does not work. seems to behave opposite of what is expected
 			// FIXME Need better way of determining if way goes inside.
 			if (polygon.containsNodeInWay(DataUtils.getCenter(node0, node1))) {
 				LOGGER.warning("Split way does not cross plygon to split on the inside");

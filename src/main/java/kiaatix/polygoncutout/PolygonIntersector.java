@@ -15,7 +15,6 @@ import org.openstreetmap.josm.tools.Geometry;
 
 import kiaatix.polygoncutout.polygon.MultiPolygon;
 import kiaatix.polygoncutout.util.Commands;
-import kiaatix.polygoncutout.util.DataUtils;
 
 public class PolygonIntersector {
 
@@ -77,7 +76,7 @@ public class PolygonIntersector {
 					continue;
 				}
 				Way otherWay = polygon1.getWayFromNode(n).getWay();
-				int index = DataUtils.getNodeIndex(otherWay, n);
+//				int index = DataUtils.getNodeIndex(otherWay, n);
 				
 				int way1NodeCount = way.getNodesCount()-1;
 				int way2NodeCount = otherWay.getNodesCount()-1;

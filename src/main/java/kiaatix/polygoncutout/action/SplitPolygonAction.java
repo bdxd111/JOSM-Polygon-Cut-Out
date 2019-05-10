@@ -74,7 +74,7 @@ public class SplitPolygonAction extends AreaAction {
 			return;
 		}
 		
-		// TODO: Currently will only select 1 of the candidates.
+		// FIXME: Currently will only select 1 of the candidates.
 		Node n0 = splitWay.getNode(0);
 		Node n1 = splitWay.getNode(1);
 		Node p = DataUtils.getCenter(n0, n1);
@@ -117,14 +117,10 @@ public class SplitPolygonAction extends AreaAction {
 		if (polygonToSplit.hasRelation()) {
 			c.removeRelation(polygonToSplit.getRelation());
 		}
-		Iterator<Way> oldWayIterator = polygonToSplit.iterator();
-		while (oldWayIterator.hasNext()) {
+		for (Way oldWay : polygonToSplit) {
 			boolean shouldDelete = true;
-			Way oldWay = oldWayIterator.next();
 			for (MultiPolygon newPolygon : newPolygons) {
-				Iterator<Way> newWayIterator = newPolygon.iterator();
-				while (newWayIterator.hasNext()) {
-					Way newWay = newWayIterator.next();
+				for (Way newWay : newPolygon) {
 					if (newWay.equals(oldWay)) {
 						shouldDelete = false;
 					}
