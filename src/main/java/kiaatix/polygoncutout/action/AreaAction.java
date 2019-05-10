@@ -1,10 +1,15 @@
 package kiaatix.polygoncutout.action;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.event.ActionEvent;
+
+import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -26,7 +31,8 @@ public abstract class AreaAction extends JosmAction{
 		OsmDataLayer activeLayer = layerManager.getActiveDataLayer();
 		
 		if (activeLayer == null) {
-			System.err.println("No active layer");
+			showNoitifcation(tr("No active layer"));
+
 			return;
 		}
 		
@@ -34,5 +40,11 @@ public abstract class AreaAction extends JosmAction{
 		actionPerformed(arg0, data);
 	}
 
+	protected void showNoitifcation(String message) {
+			new Notification(message)
+			.setIcon(JOptionPane.WARNING_MESSAGE)
+			.show();
+	}
+	
 	protected abstract void actionPerformed(ActionEvent event, DataSet data);
 }

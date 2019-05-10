@@ -27,48 +27,49 @@ public class SplitPolygonAction extends AreaAction {
 	
 	@Override
 	public void actionPerformed(ActionEvent arg0, DataSet data) {
-		split2(data);
+		split(data);
 	}
 
-	public void split2(DataSet data) {
+	public void split(DataSet data) {
 		
 		// Get all polygons
 		List<MultiPolygon> polygons = QueryUtils.getMultiPolygons(data);
 		if (polygons.size() == 0) {
-			logger.warning("No polygons found in the current dataset.");
+			showNoitifcation("No polygons found in the current dataset.");
 			return;
 		}
 		
 		// Get the selected way
 		List<Way> splitWays = QueryUtils.getSelectedWays(data);
 		if (splitWays.size() == 0) {
-			logger.warning("Please select at least one way.");
+			showNoitifcation("Please select at least one way.");
 			return;
 		}
 		
 		logger.info("Found " + splitWays.size() + " selected ways");
 		for (Way splitWay : splitWays) {
-			split3(data, polygons, splitWay);
+			splitAlongWay(data, polygons, splitWay);
 		}
 	}
 	
-	private void split3(DataSet data, List<MultiPolygon> polygons, Way splitWay) {
+	private void splitAlongWay(DataSet data, List<MultiPolygon> polygons, Way splitWay) {
 		if (splitWay.getNodesCount() < 2) {
-			logger.warning("Selected way must contain at least 2 nodes");
+			showNoitifcation("Selected way must contain at least 2 nodes");
 			return;
 		}
 		
 		logger.info("Checking " + polygons.size() + " polygons for intersections");
 		
-		
+		// Find candidate polygons. That is, any polygon the splitway starts and ends on.
 		List<MultiPolygon> intersectionPolygonCandidates = DataUtils.getMultiPolygonsWithAllNodes(polygons, splitWay.firstNode(), splitWay.lastNode());
 		if (intersectionPolygonCandidates.size() > 0) {
 			logger.info("Found " + intersectionPolygonCandidates.size() + " intersecting candidate polygons");
 		} else {
-			logger.warning("The selected line does not split any polygon");
+			showNoitifcation("The selected line does not start and end on a polygon");
 			return;
 		}
 		
+		// TODO: Currently will only select 1 of the candidates.
 		Node n0 = splitWay.getNode(0);
 		Node n1 = splitWay.getNode(1);
 		Node p = DataUtils.getCenter(n0, n1);
@@ -81,7 +82,7 @@ public class SplitPolygonAction extends AreaAction {
 		}
 		
 		if (polygonToSplit == null) {
-			logger.warning("Could not find suitable polygon to split");
+			showNoitifcation("The selected line does not fully cross a selected polygon.");
 			return;
 		}
 		logger.info("Found polygon to split");
