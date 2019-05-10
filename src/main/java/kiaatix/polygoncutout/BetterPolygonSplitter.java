@@ -53,7 +53,6 @@ public class BetterPolygonSplitter {
 				MultiPolygon p = iterator.next();
 				if (foreground.intersectsCutPolygon(p)) {
 					iterator.remove();
-					
 				} 
 //				else if (p.getArea() < 0.005) {
 //					iterator.remove();

@@ -1,5 +1,7 @@
 package kiaatix.polygoncutout.action;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
@@ -75,7 +77,7 @@ public class PolygonCutOutAction extends AreaAction {
 	}
 
 	public PolygonCutOutAction() {
-		super("Cut Out Overlapping Polygons", "cutout.png", "Cut Out Overlapping Polygons",
+		super(tr("Cut Out Overlapping Polygons"), "cutout.png", tr("Cut Out Overlapping Polygons"),
 				Shortcut.registerShortcut("tools:AreaUtils:Cut_Out", "Cut_Out", KeyEvent.VK_3, Shortcut.CTRL_SHIFT),
 				false, true);
 	}
@@ -89,6 +91,10 @@ public class PolygonCutOutAction extends AreaAction {
 		// Get all selected polygons as a list
 		List<MultiPolygon> selectedPolygons = QueryUtils.getSelectedMultiPolygons(data);
 
+		if (selectedPolygons.size() == 0) {
+			showNoitifcation(tr("No polygons selected"));
+		}
+		
 		// For each selected polygon, do displace action
 		for (MultiPolygon selectedMultiPolygon : selectedPolygons) {
 			displacePolygon(data, selectedMultiPolygon);
@@ -133,11 +139,18 @@ public class PolygonCutOutAction extends AreaAction {
 				"Split of background polygon done. Polygon was split into " + newPolygons.size() + " smaller polygons");
 
 		// Add all new polygons to the dataset
-		for (MultiPolygon p : newPolygons) {
-			c.addMultiPolygon(p);
-		}
 
-		if (newPolygons.size() > 0) {
+
+		if (newPolygons.size() == 0) {
+			
+		} else {
+			
+			// Add all new polygons
+			for (MultiPolygon p : newPolygons) {
+				c.addMultiPolygon(p);
+			}
+			
+			
 			if (background.hasRelation()) {
 				c.removeRelation(background.getRelation());
 			}

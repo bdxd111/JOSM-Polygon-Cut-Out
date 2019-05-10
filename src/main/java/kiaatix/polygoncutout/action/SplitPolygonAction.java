@@ -27,7 +27,7 @@ public class SplitPolygonAction extends AreaAction {
 	Logger logger = Logger.getLogger(SplitPolygonAction.class.getName());
 	
 	public SplitPolygonAction() {
-		super("Split Polygon", "placeholder.png", "Split Polygon", Shortcut.registerShortcut("tools:AreaUtils:split", "Split", KeyEvent.VK_1, Shortcut.CTRL_SHIFT), false, true);
+		super(tr("Split Polygon"), "placeholder.png", tr("Split Polygon"), Shortcut.registerShortcut("tools:AreaUtils:split", "Split", KeyEvent.VK_1, Shortcut.CTRL_SHIFT), false, true);
 	}
 	
 	@Override
@@ -117,6 +117,8 @@ public class SplitPolygonAction extends AreaAction {
 		if (polygonToSplit.hasRelation()) {
 			c.removeRelation(polygonToSplit.getRelation());
 		}
+		
+		// Delete any ways not part of the resulting polygons
 		for (Way oldWay : polygonToSplit) {
 			boolean shouldDelete = true;
 			for (MultiPolygon newPolygon : newPolygons) {
