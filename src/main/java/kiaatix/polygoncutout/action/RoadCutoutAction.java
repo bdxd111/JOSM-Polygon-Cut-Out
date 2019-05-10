@@ -212,13 +212,6 @@ public class RoadCutoutAction extends AreaAction {
 		return new Vector(n1).subtract(n0).rotate90Degrees().normalize().scale(width);
 	}
 	
-	
-	private Node addNode(Vector v, String tag) {
-		Node n = new Node(new EastNorth(v.x, v.y));
-		n.put(tag, "");
-		return n;		
-	}
-	
 	public class CutoutWay {
 		
 		List<Node> startNodePairs;
@@ -236,6 +229,8 @@ public class RoadCutoutAction extends AreaAction {
 	}
 	
 
-	
+
+
+	private static final long serialVersionUID = 157598165368033882L;
 }
 

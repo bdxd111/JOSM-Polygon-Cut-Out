@@ -1,5 +1,7 @@
 package kiaatix.polygoncutout.action;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
@@ -21,7 +23,7 @@ import kiaatix.polygoncutout.util.DataUtils;
 import kiaatix.polygoncutout.util.QueryUtils;
 
 public class SplitPolygonAction extends AreaAction {
-
+	
 	Logger logger = Logger.getLogger(SplitPolygonAction.class.getName());
 	
 	public SplitPolygonAction() {
@@ -38,14 +40,14 @@ public class SplitPolygonAction extends AreaAction {
 		// Get all polygons
 		List<MultiPolygon> polygons = QueryUtils.getMultiPolygons(data);
 		if (polygons.size() == 0) {
-			showNoitifcation("No polygons found in the current dataset.");
+			showNoitifcation(tr("No polygons found in the current dataset."));
 			return;
 		}
 		
 		// Get the selected way
 		List<Way> splitWays = QueryUtils.getSelectedWays(data);
 		if (splitWays.size() == 0) {
-			showNoitifcation("Please select at least one way.");
+			showNoitifcation(tr("Please select at least one way."));
 			return;
 		}
 		
@@ -57,7 +59,7 @@ public class SplitPolygonAction extends AreaAction {
 	
 	private void splitAlongWay(DataSet data, List<MultiPolygon> polygons, Way splitWay) {
 		if (splitWay.getNodesCount() < 2) {
-			showNoitifcation("Selected way must contain at least 2 nodes");
+			showNoitifcation(tr("Selected way must contain at least 2 nodes"));
 			return;
 		}
 		
@@ -68,7 +70,7 @@ public class SplitPolygonAction extends AreaAction {
 		if (intersectionPolygonCandidates.size() > 0) {
 			logger.info("Found " + intersectionPolygonCandidates.size() + " intersecting candidate polygons");
 		} else {
-			showNoitifcation("The selected line does not start and end on a polygon");
+			showNoitifcation(tr("The selected line does not start and end on a polygon"));
 			return;
 		}
 		
@@ -85,7 +87,7 @@ public class SplitPolygonAction extends AreaAction {
 		}
 		
 		if (polygonToSplit == null) {
-			showNoitifcation("The selected line does not fully cross a selected polygon.");
+			showNoitifcation(tr("The selected line does not fully cross a selected polygon."));
 			return;
 		}
 		logger.info("Found polygon to split");
@@ -192,4 +194,7 @@ public class SplitPolygonAction extends AreaAction {
 //		
 //		doSplit(data, polygonToSplit, splitWay);
 //	}
+
+
+	private static final long serialVersionUID = -4447184748241029044L;
 }

@@ -47,4 +47,6 @@ public abstract class AreaAction extends JosmAction {
 	}
 	
 	protected abstract void actionPerformed(ActionEvent event, DataSet data);
+
+	private static final long serialVersionUID = -6580759033083219152L;
 }

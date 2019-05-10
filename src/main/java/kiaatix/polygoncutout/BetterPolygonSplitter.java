@@ -245,7 +245,7 @@ public class BetterPolygonSplitter {
 			// FIXME this does not work. seems to behave oposite of what is expected
 			// FIXME Need better way of determining if way goes outside.
 			if (polygon.containsNodeInWay(DataUtils.getCenter(node0, node1))) {
-				LOGGER.warning("Split way does not cross plygon to split on the inside");
+				LOGGER.warning("Split way does not cross polygon to split on the inside");
 				return resultingWays;
 			}
 			

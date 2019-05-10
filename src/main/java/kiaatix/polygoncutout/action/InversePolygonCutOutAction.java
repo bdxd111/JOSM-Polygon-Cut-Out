@@ -25,6 +25,8 @@ import kiaatix.polygoncutout.util.Commands;
 import kiaatix.polygoncutout.util.QueryUtils;
 
 public class InversePolygonCutOutAction extends AreaAction {
+	
+	private static final long serialVersionUID = -6345691633777873303L;
 
 	private static final Logger LOGGER = Logger.getLogger( InversePolygonCutOutAction.class.getName() );
 	
@@ -74,10 +76,6 @@ public class InversePolygonCutOutAction extends AreaAction {
 		// Get all selected polygons as a list
 		List<MultiPolygon> selectedPolygons = QueryUtils.getSelectedMultiPolygons(data);
 
-		// For each selected polygon, do displace action
-		for (MultiPolygon selectedMultiPolygon : selectedPolygons) {
-		}
-		
 		// For each selected polygon, do displace action
 		for (MultiPolygon selectedMultiPolygon : selectedPolygons) {
 //			createMultiPolygon(data, selectedMultiPolygon);
