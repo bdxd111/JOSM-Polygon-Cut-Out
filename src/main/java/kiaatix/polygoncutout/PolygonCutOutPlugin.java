@@ -20,7 +20,6 @@ public class PolygonCutOutPlugin extends Plugin {
 
     addAction(new SplitPolygonAction());
     addAction(new PolygonCutOutAction());
-    addAction(new InversePolygonCutOutAction());
   }
 
   private void addAction(JosmAction action) {

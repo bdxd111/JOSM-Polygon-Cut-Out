@@ -211,7 +211,27 @@ public class PolygonCutOutAction extends AreaAction {
 	@Override
 	protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
 		setEnabled(OsmUtils.isOsmCollectionEditable(selection)
-				&& selection.stream().anyMatch(o -> (o instanceof Way || o instanceof Relation) && !o.isIncomplete()));
+				&& selection.stream().anyMatch(o -> {
+					if (o.isIncomplete()) {
+						return false;
+					}
+					
+					if (o instanceof Way) {
+						Way w = (Way) o;
+						if (w.isClosed()) {
+							return true;
+						}
+					}
+					
+					if (o instanceof Relation) {
+						Relation r = (Relation) o;
+						if (r.hasTag("type", "multipolygon")) {
+							return true;
+						}
+					}
+					
+					return false;
+				}));
 	}
 
 	private static final long serialVersionUID = -4666864264518649294L;
