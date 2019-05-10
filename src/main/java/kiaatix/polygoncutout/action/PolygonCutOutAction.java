@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
+import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
@@ -112,11 +113,11 @@ public class PolygonCutOutAction extends AreaAction {
 		// For each background polygon...
 		for (MultiPolygon backgroundPolygon : backgroundPolygons) {
 
-			if (backgroundPolygon.canBeInnerWay(selectedMultiPolygon.getOuterWay())) {
-//				doCreateMultiPolygon(data, selectedMultiPolygon, backgroundPolygon);
-			}
+			if (backgroundPolygon.canWayBeInnerWay(selectedMultiPolygon.getOuterWay())) {
+				doCreateMultiPolygon(data, selectedMultiPolygon, backgroundPolygon);
+			
 			// If that background polygon intersects the selected polygon
-			if (selectedMultiPolygon.intersectsMultiPolygon(backgroundPolygon)) {
+			} else if (selectedMultiPolygon.intersectsMultiPolygon(backgroundPolygon)) {
 
 				// If they do not share same outer way
 				if (!selectedMultiPolygon.getOuterWay().equals(backgroundPolygon.getOuterWay())) {
@@ -190,6 +191,25 @@ public class PolygonCutOutAction extends AreaAction {
 		c.makeCommandSequence("Cutout polygon");
 	}
 
+	private void doCreateMultiPolygon(DataSet data, MultiPolygon inner, MultiPolygon outer) {
+		Commands c = new Commands(data);
+		
+		if (outer.hasRelation()) {
+			c.addInnerWayToPolygon(outer.getRelation(), inner.getOuterWay());
+		} else {
+			MultiPolygon multiPolygon = new MultiPolygon();
+			multiPolygon.setOuter(outer.getOuterWay());
+			multiPolygon.addInnerWay(inner.getOuterWay());
+			multiPolygon.addTags(outer.getTags());
+			
+			c.addMultiPolygon(multiPolygon);
+			
+			Way w = new Way(outer.getOuterWay());
+			w.removeAll();
+			c.addCommand(new ChangeCommand(data, outer.getOuterWay(), w));
+		}
+	}
+	
 	private boolean hasValidTag(OsmPrimitive object) {
 
 		for (Entry<String, String> e : object.getKeys().entrySet()) {

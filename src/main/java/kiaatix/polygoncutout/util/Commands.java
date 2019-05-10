@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.command.AddCommand;
+import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.ChangeNodesCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
@@ -39,6 +40,12 @@ public class Commands {
 	public void setWayNodes(Way way, List<Node> newNodes) {
 		Command c = new ChangeNodesCommand(way, newNodes);
 		executeCommand(c);
+	}
+	
+	public void addInnerWayToPolygon(Relation relation, Way innerWay) {
+		Relation newRel = new Relation(relation);
+		newRel.addMember(new RelationMember("inner", innerWay));
+		executeCommand(new ChangeCommand(relation, newRel));
 	}
 	
 	public void addMultiPolygon(MultiPolygon polygon) {
@@ -120,6 +127,10 @@ public class Commands {
 	public void removeRelation(Relation relation) {
 		Command c = new DeleteCommand(data, relation);
 		executeCommand(c);
+	}
+	
+	public void addCommand(Command command) {
+		executeCommand(command);
 	}
 	
 	private void executeCommand(Command command) {
