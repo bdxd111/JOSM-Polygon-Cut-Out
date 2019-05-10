@@ -25,8 +25,6 @@ public class BetterPolygonSplitter {
 	private static final Logger LOGGER = Logger.getLogger( BetterPolygonSplitter.class.getName() );
 	
 	private DataSet data;
-
-//	private List<Command> commands = new ArrayList<Command>();
 	
 	public BetterPolygonSplitter(DataSet data) {
 		this.data = data;
@@ -41,7 +39,6 @@ public class BetterPolygonSplitter {
 	 * @return
 	 */
 	public List<MultiPolygon> cutOutPolygon(MultiPolygon foreground, MultiPolygon background, Commands commands) {
-//		commands = new ArrayList<Command>();
 
 		// Split the background polygon along the lines of the foreground polygon
 		// Get the list of the resulting polygons
