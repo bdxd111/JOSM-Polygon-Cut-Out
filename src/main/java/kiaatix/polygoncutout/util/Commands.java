@@ -31,13 +31,9 @@ public class Commands {
 	}
 	
 	public void reverseWay(Way way) {
-//		Way newWay = new Way()
 		List<Node> nodes = way.getNodes();
 		Collections.reverse(nodes);
 		setWayNodes(way, nodes);
-//		way.setNodes(nodes);
-//		Command c = new ChangeNodesCommand(way, nodes);
-//		executeCommand(c);
 	}
 	
 	public void setWayNodes(Way way, List<Node> newNodes) {
