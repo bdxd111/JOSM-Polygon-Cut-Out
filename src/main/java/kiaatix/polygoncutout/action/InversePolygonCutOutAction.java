@@ -2,14 +2,20 @@ package kiaatix.polygoncutout.action;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
+
+import javax.management.relation.Relation;
+
 import java.util.Set;
 
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -162,4 +168,14 @@ public class InversePolygonCutOutAction extends AreaAction {
 		c.makeCommandSequence("Inverse cutout polygon");
 	}
 	
+	@Override
+	protected void updateEnabledState() {
+		updateEnabledStateOnCurrentSelection();
+	}
+	
+	@Override
+	protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
+		setEnabled(OsmUtils.isOsmCollectionEditable(selection)
+				&& selection.stream().anyMatch(o -> (o instanceof Way || o instanceof Relation) && !o.isIncomplete()));
+	}
 }

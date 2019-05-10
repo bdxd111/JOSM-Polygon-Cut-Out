@@ -2,12 +2,15 @@ package kiaatix.polygoncutout.action;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -136,6 +139,16 @@ public class SplitPolygonAction extends AreaAction {
 		c.makeCommandSequence("Split Polygon");
 	}
 	
+	@Override
+	protected void updateEnabledState() {
+		updateEnabledStateOnCurrentSelection();
+	}
+	
+	@Override
+	protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
+		setEnabled(OsmUtils.isOsmCollectionEditable(selection)
+				&& selection.stream().anyMatch(o -> o instanceof Way && !o.isIncomplete()));
+	}
 	
 //	private List<MultiPolygon> getMultiPolygonContainingNode(List<MultiPolygon> polygons, Node n) {
 //		List<MultiPolygon> result = new ArrayList<MultiPolygon>();

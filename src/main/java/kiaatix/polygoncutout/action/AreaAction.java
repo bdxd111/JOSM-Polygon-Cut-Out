@@ -14,7 +14,7 @@ import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.Shortcut;
 
-public abstract class AreaAction extends JosmAction{
+public abstract class AreaAction extends JosmAction {
 
 	public AreaAction(String name, String iconName, String tooltip, Shortcut shortcut) {
 		this(name, iconName, tooltip, shortcut, false, true);
