@@ -146,7 +146,11 @@ public class PolygonCutOutAction extends AreaAction {
 
 
 		if (newPolygons.size() == 0) {
-			doCreateMultiPolygon(data, c, foreground, background);
+			// If the background polygon is contained within the foreground polygon
+			// No multipolygon must be created.
+			if (!foreground.canWayBeInnerWay(background.getOuterWay())) {
+				doCreateMultiPolygon(data, c, foreground, background);
+			}
 		} else {
 			
 			// Add all new polygons
