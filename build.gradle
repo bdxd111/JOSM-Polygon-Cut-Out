@@ -7,7 +7,7 @@ repositories {
   maven { url "http://jcenter.bintray.com"}
 }
 
-version = 'v0.6'
+version = 'v0.7'
 archivesBaseName = 'PolygonCutOut'
 josm {
   josmCompileVersion = '14382'
