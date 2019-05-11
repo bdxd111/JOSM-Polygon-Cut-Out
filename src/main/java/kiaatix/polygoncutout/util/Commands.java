@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.command.AddCommand;
+import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.ChangeNodesCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
@@ -14,6 +15,7 @@ import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
@@ -41,8 +43,15 @@ public class Commands {
 		executeCommand(c);
 	}
 	
+	public void addInnerWayToPolygon(Relation relation, Way innerWay) {
+		Relation newRel = new Relation(relation);
+		newRel.addMember(new RelationMember("inner", innerWay));
+		executeCommand(new ChangeCommand(relation, newRel));
+	}
+	
 	public void addMultiPolygon(MultiPolygon polygon) {
 		if (polygon.hasInnerWays()) {
+			
 			Relation relation = new Relation();
 			relation.put("type", "multipolygon");
 			polygon.getTags().forEach((key, value) -> relation.put(key, value));
@@ -119,6 +128,27 @@ public class Commands {
 	
 	public void removeRelation(Relation relation) {
 		Command c = new DeleteCommand(data, relation);
+		executeCommand(c);
+	}
+	
+	public void addCommand(Command command) {
+		executeCommand(command);
+	}
+	
+	public void removeTags(OsmPrimitive primitive) {
+		OsmPrimitive newPrimitive = null;
+		if (primitive instanceof Node) {
+			newPrimitive = new Node((Node) primitive);
+		}
+		if (primitive instanceof Way) {
+			newPrimitive = new Way((Way) primitive);
+		}
+		if (primitive instanceof Relation) {
+			newPrimitive = new Relation((Relation) primitive);
+		}
+		
+		newPrimitive.removeAll();
+		Command c = new ChangeCommand(primitive, newPrimitive);
 		executeCommand(c);
 	}
 	

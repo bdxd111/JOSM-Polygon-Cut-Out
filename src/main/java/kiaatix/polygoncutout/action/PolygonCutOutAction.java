@@ -7,14 +7,18 @@ import java.awt.event.KeyEvent;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
+import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.tools.Geometry;
+import org.openstreetmap.josm.tools.Geometry.PolygonIntersection;
 import org.openstreetmap.josm.tools.Shortcut;
 
 import kiaatix.polygoncutout.BetterPolygonSplitter;
@@ -112,9 +116,9 @@ public class PolygonCutOutAction extends AreaAction {
 		// For each background polygon...
 		for (MultiPolygon backgroundPolygon : backgroundPolygons) {
 
-			if (backgroundPolygon.canBeInnerWay(selectedMultiPolygon.getOuterWay())) {
+//			if (backgroundPolygon.canWayBeInnerWay(selectedMultiPolygon.getOuterWay())) {
 //				doCreateMultiPolygon(data, selectedMultiPolygon, backgroundPolygon);
-			}
+//			}
 			// If that background polygon intersects the selected polygon
 			if (selectedMultiPolygon.intersectsMultiPolygon(backgroundPolygon)) {
 
@@ -142,7 +146,7 @@ public class PolygonCutOutAction extends AreaAction {
 
 
 		if (newPolygons.size() == 0) {
-			
+			doCreateMultiPolygon(data, c, foreground, background);
 		} else {
 			
 			// Add all new polygons
@@ -155,7 +159,6 @@ public class PolygonCutOutAction extends AreaAction {
 				c.removeRelation(background.getRelation());
 			}
 
-			int i = 0;
 			for (Way oldWay : background) {
 				boolean shouldDelete = true;
 
@@ -170,33 +173,56 @@ public class PolygonCutOutAction extends AreaAction {
 				}
 
 				// If still part of other relations do not delete
-				if (Way.getParentRelations(Collections.singleton(oldWay)).size() > 0) {
+				Set<Relation> parentRelations = Way.getParentRelations(Collections.singleton(oldWay));
+				if (parentRelations.size() > 0) {
+					// Does oldWay have inner as role for all parent relations
+					if (parentRelations.stream().allMatch(pr -> pr.getMembers().stream().anyMatch(rm -> rm.getMember() == oldWay && rm.hasRole("inner")))) {
+						if (Geometry.polygonIntersection(oldWay.getNodes(), foreground.getOuterWay().getNodes()) == PolygonIntersection.SECOND_INSIDE_FIRST) {
+							c.removeTags(oldWay);
+						}
+					}
 					shouldDelete = false;
 				}
 
 				// If inner way and is itself a polygon
-				if (i > 0 && oldWay.hasAreaTags()) {
+				if (background.isInner(oldWay) && oldWay.hasAreaTags()) {
 					shouldDelete = false;
 				}
 
 				if (shouldDelete) {
 					c.removeWay(oldWay);
 				}
-
-				i++;
 			}
 		}
 
 		c.makeCommandSequence("Cutout polygon");
 	}
 
+	private void doCreateMultiPolygon(DataSet data, Commands c, MultiPolygon inner, MultiPolygon outer) {
+		
+		if (outer.hasRelation()) {
+			c.addInnerWayToPolygon(outer.getRelation(), inner.getOuterWay());
+		} else {
+			MultiPolygon multiPolygon = new MultiPolygon();
+			multiPolygon.setOuter(outer.getOuterWay());
+			multiPolygon.addInnerWay(inner.getOuterWay());
+			multiPolygon.addTags(outer.getTags());
+			
+			c.addMultiPolygon(multiPolygon);
+			
+			Way w = new Way(outer.getOuterWay());
+			w.removeAll();
+			c.addCommand(new ChangeCommand(data, outer.getOuterWay(), w));
+		}
+	}
+	
 	private boolean hasValidTag(OsmPrimitive object) {
 
 		for (Entry<String, String> e : object.getKeys().entrySet()) {
-			if (disallowedTags.contains(e.getKey(), e.getValue()) || disallowedTags.contains(e.getKey())) {
+			if (disallowedTags.contains(e.getKey(), e.getValue())) {
 				return false;
 			}
-			if (allowedTags.contains(e.getKey(), e.getValue()) || allowedTags.contains(e.getKey())) {
+			if (allowedTags.contains(e.getKey(), e.getValue())) {
 				return true;
 			}
 		}
@@ -218,9 +244,9 @@ public class PolygonCutOutAction extends AreaAction {
 					
 					if (o instanceof Way) {
 						Way w = (Way) o;
-						if (w.isClosed()) {
+//						if (w.isClosed()) {
 							return true;
-						}
+//						}
 					}
 					
 					if (o instanceof Relation) {

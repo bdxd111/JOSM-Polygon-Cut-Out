@@ -365,11 +365,17 @@ public class MultiPolygon implements Iterable<Way> {
 		return false;
 	}
 	
-	public boolean canBeInnerWay(Way way) {
-		if (Geometry.polygonIntersection(outerWay.getNodes(), way.getNodes()) == PolygonIntersection.SECOND_INSIDE_FIRST) {
-			return true;
+	public boolean canWayBeInnerWay(Way way) {
+		if (Geometry.polygonIntersection(outerWay.getNodes(), way.getNodes()) != PolygonIntersection.SECOND_INSIDE_FIRST) {
+			return false;
 		}
-		return false;
+		
+		for (Way inner : innerWays) {
+			if (Geometry.polygonIntersection(inner.getNodes(), way.getNodes()) != PolygonIntersection.OUTSIDE) {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	public boolean isNodeInsidePolygon(Node n) {
@@ -565,5 +571,15 @@ public class MultiPolygon implements Iterable<Way> {
 				data.addSelected(outerWay);
 			}
 		}
+	}
+	
+	public boolean isInner(Way way) {
+		for (Way inner : innerWays) {
+			if (inner == way) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
  }

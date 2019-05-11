@@ -36,6 +36,10 @@ public class TagSet {
 			return false;
 		}
 		
+		if (value.isEmpty()) {
+			return true;
+		}
+		
 		return values.contains(value);
 	}
 }

@@ -103,7 +103,7 @@ public class InversePolygonCutOutAction extends AreaAction {
 		// For each background polygon...
 		for (MultiPolygon backgroundPolygon : backgroundPolygons) {
 			
-			if (backgroundPolygon.canBeInnerWay(selectedMultiPolygon.getOuterWay())) {
+			if (backgroundPolygon.canWayBeInnerWay(selectedMultiPolygon.getOuterWay())) {
 //				doCreateMultiPolygon(data, selectedMultiPolygon, backgroundPolygon);
 			}
 			// If that background polygon intersects the selected polygon
