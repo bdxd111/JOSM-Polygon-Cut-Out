@@ -17,6 +17,8 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.tools.Geometry;
+import org.openstreetmap.josm.tools.Geometry.PolygonIntersection;
 import org.openstreetmap.josm.tools.Shortcut;
 
 import kiaatix.polygoncutout.BetterPolygonSplitter;
@@ -175,7 +177,9 @@ public class PolygonCutOutAction extends AreaAction {
 				if (parentRelations.size() > 0) {
 					// Does oldWay have inner as role for all parent relations
 					if (parentRelations.stream().allMatch(pr -> pr.getMembers().stream().anyMatch(rm -> rm.getMember() == oldWay && rm.hasRole("inner")))) {
-						c.removeTags(oldWay);
+						if (Geometry.polygonIntersection(oldWay.getNodes(), foreground.getOuterWay().getNodes()) == PolygonIntersection.SECOND_INSIDE_FIRST) {
+							c.removeTags(oldWay);
+						}
 					}
 					shouldDelete = false;
 				}
