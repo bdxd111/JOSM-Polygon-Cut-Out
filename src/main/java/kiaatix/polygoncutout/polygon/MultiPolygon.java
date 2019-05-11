@@ -572,4 +572,14 @@ public class MultiPolygon implements Iterable<Way> {
 			}
 		}
 	}
+	
+	public boolean isInner(Way way) {
+		for (Way inner : innerWays) {
+			if (inner == way) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
  }

@@ -7,6 +7,7 @@ import java.awt.event.KeyEvent;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
@@ -156,7 +157,6 @@ public class PolygonCutOutAction extends AreaAction {
 				c.removeRelation(background.getRelation());
 			}
 
-			int i = 0;
 			for (Way oldWay : background) {
 				boolean shouldDelete = true;
 
@@ -171,20 +171,23 @@ public class PolygonCutOutAction extends AreaAction {
 				}
 
 				// If still part of other relations do not delete
-				if (Way.getParentRelations(Collections.singleton(oldWay)).size() > 0) {
+				Set<Relation> parentRelations = Way.getParentRelations(Collections.singleton(oldWay));
+				if (parentRelations.size() > 0) {
+					// Does oldWay have inner as role for all parent relations
+					if (parentRelations.stream().allMatch(pr -> pr.getMembers().stream().anyMatch(rm -> rm.getMember() == oldWay && rm.hasRole("inner")))) {
+						c.removeTags(oldWay);
+					}
 					shouldDelete = false;
 				}
 
 				// If inner way and is itself a polygon
-				if (i > 0 && oldWay.hasAreaTags()) {
+				if (background.isInner(oldWay) && oldWay.hasAreaTags()) {
 					shouldDelete = false;
 				}
 
 				if (shouldDelete) {
 					c.removeWay(oldWay);
 				}
-
-				i++;
 			}
 		}
 
@@ -192,13 +195,10 @@ public class PolygonCutOutAction extends AreaAction {
 	}
 
 	private void doCreateMultiPolygon(DataSet data, Commands c, MultiPolygon inner, MultiPolygon outer) {
-		System.out.println("create multipolygon!");
 		
 		if (outer.hasRelation()) {
-			System.out.println("outer already multipolygon");
 			c.addInnerWayToPolygon(outer.getRelation(), inner.getOuterWay());
 		} else {
-			System.out.println("outer not yet multipolygon");
 			MultiPolygon multiPolygon = new MultiPolygon();
 			multiPolygon.setOuter(outer.getOuterWay());
 			multiPolygon.addInnerWay(inner.getOuterWay());

@@ -15,6 +15,7 @@ import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
@@ -132,6 +133,23 @@ public class Commands {
 	
 	public void addCommand(Command command) {
 		executeCommand(command);
+	}
+	
+	public void removeTags(OsmPrimitive primitive) {
+		OsmPrimitive newPrimitive = null;
+		if (primitive instanceof Node) {
+			newPrimitive = new Node((Node) primitive);
+		}
+		if (primitive instanceof Way) {
+			newPrimitive = new Way((Way) primitive);
+		}
+		if (primitive instanceof Relation) {
+			newPrimitive = new Relation((Relation) primitive);
+		}
+		
+		newPrimitive.removeAll();
+		Command c = new ChangeCommand(primitive, newPrimitive);
+		executeCommand(c);
 	}
 	
 	private void executeCommand(Command command) {
