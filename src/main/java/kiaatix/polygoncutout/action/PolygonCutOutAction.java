@@ -143,7 +143,7 @@ public class PolygonCutOutAction extends AreaAction {
 
 
 		if (newPolygons.size() == 0) {
-			doCreateMultiPolygon(data, foreground, background);
+			doCreateMultiPolygon(data, c, foreground, background);
 		} else {
 			
 			// Add all new polygons
@@ -191,12 +191,14 @@ public class PolygonCutOutAction extends AreaAction {
 		c.makeCommandSequence("Cutout polygon");
 	}
 
-	private void doCreateMultiPolygon(DataSet data, MultiPolygon inner, MultiPolygon outer) {
-		Commands c = new Commands(data);
+	private void doCreateMultiPolygon(DataSet data, Commands c, MultiPolygon inner, MultiPolygon outer) {
+		System.out.println("create multipolygon!");
 		
 		if (outer.hasRelation()) {
+			System.out.println("outer already multipolygon");
 			c.addInnerWayToPolygon(outer.getRelation(), inner.getOuterWay());
 		} else {
+			System.out.println("outer not yet multipolygon");
 			MultiPolygon multiPolygon = new MultiPolygon();
 			multiPolygon.setOuter(outer.getOuterWay());
 			multiPolygon.addInnerWay(inner.getOuterWay());

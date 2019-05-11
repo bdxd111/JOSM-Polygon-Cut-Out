@@ -50,6 +50,7 @@ public class Commands {
 	
 	public void addMultiPolygon(MultiPolygon polygon) {
 		if (polygon.hasInnerWays()) {
+			
 			Relation relation = new Relation();
 			relation.put("type", "multipolygon");
 			polygon.getTags().forEach((key, value) -> relation.put(key, value));
