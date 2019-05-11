@@ -113,11 +113,11 @@ public class PolygonCutOutAction extends AreaAction {
 		// For each background polygon...
 		for (MultiPolygon backgroundPolygon : backgroundPolygons) {
 
-			if (backgroundPolygon.canWayBeInnerWay(selectedMultiPolygon.getOuterWay())) {
-				doCreateMultiPolygon(data, selectedMultiPolygon, backgroundPolygon);
-			
+//			if (backgroundPolygon.canWayBeInnerWay(selectedMultiPolygon.getOuterWay())) {
+//				doCreateMultiPolygon(data, selectedMultiPolygon, backgroundPolygon);
+//			}
 			// If that background polygon intersects the selected polygon
-			} else if (selectedMultiPolygon.intersectsMultiPolygon(backgroundPolygon)) {
+			if (selectedMultiPolygon.intersectsMultiPolygon(backgroundPolygon)) {
 
 				// If they do not share same outer way
 				if (!selectedMultiPolygon.getOuterWay().equals(backgroundPolygon.getOuterWay())) {
@@ -143,7 +143,7 @@ public class PolygonCutOutAction extends AreaAction {
 
 
 		if (newPolygons.size() == 0) {
-			
+			doCreateMultiPolygon(data, foreground, background);
 		} else {
 			
 			// Add all new polygons
@@ -213,10 +213,10 @@ public class PolygonCutOutAction extends AreaAction {
 	private boolean hasValidTag(OsmPrimitive object) {
 
 		for (Entry<String, String> e : object.getKeys().entrySet()) {
-			if (disallowedTags.contains(e.getKey(), e.getValue()) || disallowedTags.contains(e.getKey())) {
+			if (disallowedTags.contains(e.getKey(), e.getValue())) {
 				return false;
 			}
-			if (allowedTags.contains(e.getKey(), e.getValue()) || allowedTags.contains(e.getKey())) {
+			if (allowedTags.contains(e.getKey(), e.getValue())) {
 				return true;
 			}
 		}
@@ -238,9 +238,9 @@ public class PolygonCutOutAction extends AreaAction {
 					
 					if (o instanceof Way) {
 						Way w = (Way) o;
-						if (w.isClosed()) {
+//						if (w.isClosed()) {
 							return true;
-						}
+//						}
 					}
 					
 					if (o instanceof Relation) {
