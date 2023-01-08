@@ -69,6 +69,7 @@ public class PolygonCutOutAction extends AreaAction {
 		);
 		
 		allowedTags.addTag("area", "yes");
+        allowedTags.addTag("area:highway");
 
 		disallowedTags.addTag("building");
 		disallowedTags.addTag("boundary");
@@ -221,16 +222,19 @@ public class PolygonCutOutAction extends AreaAction {
 	}
 	
 	private boolean hasValidTag(OsmPrimitive object) {
-
+	    boolean hasDisallowedTags = false;
+	    boolean hasAllowedTags = false;
 		for (Entry<String, String> e : object.getKeys().entrySet()) {
-			if (disallowedTags.contains(e.getKey(), e.getValue())) {
-				return false;
-			}
-			if (allowedTags.contains(e.getKey(), e.getValue())) {
-				return true;
-			}
+            if (disallowedTags.contains(e.getKey()) ||
+                    disallowedTags.contains(e.getKey(), e.getValue())) {
+                hasDisallowedTags = true;
+            }
+            if (allowedTags.contains(e.getKey()) ||
+                    allowedTags.contains(e.getKey(), e.getValue())) {
+                hasAllowedTags = true;
+            }
 		}
-		return false;
+		return hasAllowedTags && !hasDisallowedTags;
 	}
 
 	@Override
@@ -247,7 +251,7 @@ public class PolygonCutOutAction extends AreaAction {
 					}
 					
 					if (o instanceof Way) {
-						Way w = (Way) o;
+//						Way w = (Way) o;
 //						if (w.isClosed()) {
 							return true;
 //						}
