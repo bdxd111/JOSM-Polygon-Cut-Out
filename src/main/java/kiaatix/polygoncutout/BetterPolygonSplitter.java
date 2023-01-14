@@ -365,30 +365,30 @@ public class BetterPolygonSplitter {
 		return resultingWays;
 	}
 	
-	private void validateMultiPolygons(List<MultiPolygon> polygons) {
-		Iterator<MultiPolygon> iter = polygons.iterator();
-		while (iter.hasNext()) {
-			MultiPolygon poly = iter.next();
-			if (!poly.hasInnerWays()) {
-				if (doesWayCrossItself(poly.getOuterWay())) {
-					iter.remove();
-				}
-			}
-		}
-	}
+//	private void validateMultiPolygons(List<MultiPolygon> polygons) {
+//		Iterator<MultiPolygon> iter = polygons.iterator();
+//		while (iter.hasNext()) {
+//			MultiPolygon poly = iter.next();
+//			if (!poly.hasInnerWays()) {
+//				if (doesWayCrossItself(poly.getOuterWay())) {
+//					iter.remove();
+//				}
+//			}
+//		}
+//	}
 	
-	private boolean doesWayCrossItself(Way way) {
-		Set<Node> nodes = new HashSet<Node>();
-		for (int i = 1; i < way.getNodesCount(); i++) {
-			Node n = way.getNode(i);
-			boolean newNode = nodes.add(n);
-			if (!newNode) {
-				return true;
-			}
-		}
-		
-		return false;
-	}
+//	private boolean doesWayCrossItself(Way way) {
+//		Set<Node> nodes = new HashSet<Node>();
+//		for (int i = 1; i < way.getNodesCount(); i++) {
+//			Node n = way.getNode(i);
+//			boolean newNode = nodes.add(n);
+//			if (!newNode) {
+//				return true;
+//			}
+//		}
+//		
+//		return false;
+//	}
 	
 	private Way splitMultiPolygon(Way inner, Way outer, List<Node> splitEdge, boolean bothInner) {
 		Way resultWay = new Way();
@@ -570,26 +570,26 @@ public class BetterPolygonSplitter {
 		return splitWays;
 	}
 	
-	/**
-	 * Return the first polygon in the given list which contains the given node
-	 * @param polygons
-	 * @param n
-	 * @return
-	 */
-	private MultiPolygon getPolygonFromNode(List<MultiPolygon> polygons, Node n) {
-		for (MultiPolygon polygon : polygons) {
-			Iterator<Way> wayIterator = polygon.iterator();
-			while (wayIterator.hasNext()) {
-				Way way = wayIterator.next();
-				for (Node node : way.getNodes()) {
-					if (node.equals(n)) {
-						return polygon;
-					}
-				}
-			}
-		}
-		throw new RuntimeException("Intersecting node is not in other polygon");
-	}
+//	/**
+//	 * Return the first polygon in the given list which contains the given node
+//	 * @param polygons
+//	 * @param n
+//	 * @return
+//	 */
+//	private MultiPolygon getPolygonFromNode(List<MultiPolygon> polygons, Node n) {
+//		for (MultiPolygon polygon : polygons) {
+//			Iterator<Way> wayIterator = polygon.iterator();
+//			while (wayIterator.hasNext()) {
+//				Way way = wayIterator.next();
+//				for (Node node : way.getNodes()) {
+//					if (node.equals(n)) {
+//						return polygon;
+//					}
+//				}
+//			}
+//		}
+//		throw new RuntimeException("Intersecting node is not in other polygon");
+//	}
 	
 	public List<Integer> getIntersectionNodes(Way way) {
 		List<Integer> intersection = new ArrayList<Integer>();
@@ -608,22 +608,22 @@ public class BetterPolygonSplitter {
 		return intersection;
 	}
 	
-	/**
-	 * Return the index of the next intersection node (node labeled 'temp') or -1 if no node found.
-	 * @param way
-	 * @param startIndex
-	 * @return
-	 */
-	private int getNextIntersectionNode(Way way, int startIndex) {
-		int n = -1;
-		for (int i = startIndex; i < way.getNodesCount(); i++) {
-			if (way.getNode(i).hasKey("temp")) {
-				n = i;
-				break;
-			}
-		}
-		return n;
-	}
+//	/**
+//	 * Return the index of the next intersection node (node labeled 'temp') or -1 if no node found.
+//	 * @param way
+//	 * @param startIndex
+//	 * @return
+//	 */
+//	private int getNextIntersectionNode(Way way, int startIndex) {
+//		int n = -1;
+//		for (int i = startIndex; i < way.getNodesCount(); i++) {
+//			if (way.getNode(i).hasKey("temp")) {
+//				n = i;
+//				break;
+//			}
+//		}
+//		return n;
+//	}
 	
 	public List<Node> getWayNodesFromWay(Way way, int startIndex, int endIndex) {
 		List<Node> nodes = new ArrayList<Node>();
