@@ -10,6 +10,7 @@ tmp/
 *~.nib
 local.properties
 .settings/
+/.classpath
 .loadpath
 .recommenders
 
@@ -56,3 +57,4 @@ local.properties
 .cache-main
 .scala_dependencies
 .worksheet
+

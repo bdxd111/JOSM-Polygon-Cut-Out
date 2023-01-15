@@ -1,16 +1,18 @@
 plugins {
-  id 'org.openstreetmap.josm' version '0.4.8'
+  id 'org.openstreetmap.josm' version '0.8.2'
 }
+
+
 
 repositories {
-  jcenter()
-  maven { url "http://jcenter.bintray.com"}
+  mavenCentral()
+//  maven { url "http://jcenter.bintray.com"}
 }
 
-version = 'v0.7'
+version = 'v0.7.1'
 archivesBaseName = 'PolygonCutOut'
 josm {
-  josmCompileVersion = '14382'
+  josmCompileVersion = '18622'
   manifest {
     description = 'Plugin for splitting and cutting out (multi)polygons'
     mainClass = 'kiaatix.polygoncutout.PolygonCutOutPlugin'
@@ -39,5 +41,5 @@ dependencies {
 }
 
 jar {
-    from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    from configurations.runtimeClasspath.filter { it.isDirectory() ? it : zipTree(it) }
 }
