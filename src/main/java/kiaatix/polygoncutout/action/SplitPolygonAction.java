@@ -26,7 +26,7 @@ public class SplitPolygonAction extends AreaAction {
 	Logger logger = Logger.getLogger(SplitPolygonAction.class.getName());
 	
 	public SplitPolygonAction() {
-		super(tr("Split Polygon"), "placeholder.png", tr("Split Polygon"), Shortcut.registerShortcut("tools:AreaUtils:split", "Split", KeyEvent.VK_1, Shortcut.CTRL_SHIFT), false, true);
+		super(tr("Split Polygon"), "split.png", tr("Split Polygon"), Shortcut.registerShortcut("tools:AreaUtils:split", "Split", KeyEvent.VK_1, Shortcut.CTRL_SHIFT), false, true);
 	}
 	
 	@Override

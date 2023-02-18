@@ -2,7 +2,9 @@ plugins {
   id 'org.openstreetmap.josm' version '0.8.2'
 }
 
-
+tasks.withType(JavaCompile) {
+    options.release = 8
+}
 
 repositories {
   mavenCentral()

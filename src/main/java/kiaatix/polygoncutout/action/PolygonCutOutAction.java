@@ -35,6 +35,7 @@ public class PolygonCutOutAction extends AreaAction {
 	private static TagSet disallowedTags = new TagSet();
 
 	static {
+		// Allowed list of values for the 'natural' tag
 		allowedTags.addTags("natural", 
 				"wood", 
 				"scrub", 
@@ -53,20 +54,38 @@ public class PolygonCutOutAction extends AreaAction {
 				"beach"
 		);
 
+		// Allowed list of values for the 'landuse'tag
 		allowedTags.addTags("landuse", 
 				"allotments", 
 				"basin", 
 				"brownfield", 
-				"farmland", 
+				"farmland",
+				"flowerbed",
 				"forest", 
 				"grass", 
 				"greenfield", 
+				"greenhouse_horticulture",
 				"meadow", 
 				"orchard", 
 				"plant_nursery", 
 				"village_green", 
 				"vineyard"
 		);
+
+		// Disallowed list of values for the 'landuse'tag. 
+		// These are background polygons and are allowed to overlap with other polygons.
+		disallowedTags.addTags("landuse",
+				"commercial", 
+				"construction",
+				"education",
+				"fairground",
+				"industrial",
+				"institutional",
+				"military",
+				"residential",
+				"retail"
+		);
+		
 		
 		allowedTags.addTag("area", "yes");
         allowedTags.addTag("area:highway");
@@ -225,12 +244,10 @@ public class PolygonCutOutAction extends AreaAction {
 	    boolean hasDisallowedTags = false;
 	    boolean hasAllowedTags = false;
 		for (Entry<String, String> e : object.getKeys().entrySet()) {
-            if (disallowedTags.contains(e.getKey()) ||
-                    disallowedTags.contains(e.getKey(), e.getValue())) {
+            if (disallowedTags.contains(e.getKey(), e.getValue())) {
                 hasDisallowedTags = true;
             }
-            if (allowedTags.contains(e.getKey()) ||
-                    allowedTags.contains(e.getKey(), e.getValue())) {
+            if (allowedTags.contains(e.getKey(), e.getValue())) {
                 hasAllowedTags = true;
             }
 		}
