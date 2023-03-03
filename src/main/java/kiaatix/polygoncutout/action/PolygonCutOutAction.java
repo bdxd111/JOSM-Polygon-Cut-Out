@@ -4,11 +4,11 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import org.openstreetmap.josm.command.ChangeCommand;
@@ -25,18 +25,19 @@ import kiaatix.polygoncutout.BetterPolygonSplitter;
 import kiaatix.polygoncutout.polygon.MultiPolygon;
 import kiaatix.polygoncutout.util.Commands;
 import kiaatix.polygoncutout.util.QueryUtils;
-import kiaatix.polygoncutout.util.TagSet;
+import kiaatix.polygoncutout.util.TagSettings;
 
 public class PolygonCutOutAction extends AreaAction {
 
 	private static final Logger LOGGER = Logger.getLogger(PolygonCutOutAction.class.getName());
 
-	private static TagSet allowedTags = new TagSet();
-	private static TagSet disallowedTags = new TagSet();
+//	private static TagSet allowedTags = new TagSet();
+//	private static TagSet disallowedTags = new TagSet();
+	private static final TagSettings tagSettings;
 
 	static {
-		// Allowed list of values for the 'natural' tag
-		allowedTags.addTags("natural", 
+	    tagSettings = new TagSettings();
+	    tagSettings.allowTags("natural", Arrays.asList( 
 				"wood", 
 				"scrub", 
 				"heath", 
@@ -51,53 +52,36 @@ public class PolygonCutOutAction extends AreaAction {
 				"water", 
 				"wetland", 
 				"glacier", 
-				"beach"
+				"beach")
 		);
 
-		// Allowed list of values for the 'landuse'tag
-		allowedTags.addTags("landuse", 
+	    tagSettings.allowTags("landuse", Arrays.asList( 
 				"allotments", 
 				"basin", 
 				"brownfield", 
-				"farmland",
-				"flowerbed",
+				"farmland", 
 				"forest", 
 				"grass", 
 				"greenfield", 
-				"greenhouse_horticulture",
 				"meadow", 
 				"orchard", 
 				"plant_nursery", 
 				"village_green", 
-				"vineyard"
-		);
-
-		// Disallowed list of values for the 'landuse'tag. 
-		// These are background polygons and are allowed to overlap with other polygons.
-		disallowedTags.addTags("landuse",
-				"commercial", 
-				"construction",
-				"education",
-				"fairground",
-				"industrial",
-				"institutional",
-				"military",
-				"residential",
-				"retail"
+				"vineyard")
 		);
 		
-		
-		allowedTags.addTag("area", "yes");
-        allowedTags.addTag("area:highway");
+	    tagSettings.allowTag("area", "yes");
+	    tagSettings.allowKey("area:highway");
 
-		disallowedTags.addTag("building");
-		disallowedTags.addTag("boundary");
-		disallowedTags.addTag("leisure");
-		disallowedTags.addTag("man_made");
-		
-		disallowedTags.addTag("highway");
-		disallowedTags.addTag("railway");
-		disallowedTags.addTag("public_transport");
+	    tagSettings.disAllowKeys(Arrays.asList(
+		    "building",
+		    "boundary",
+		    "leisure",
+		    "man_made",
+		    "highway",
+		    "railway",
+		    "public_transport"
+		));
 	}
 
 	public PolygonCutOutAction() {
@@ -125,10 +109,10 @@ public class PolygonCutOutAction extends AreaAction {
 		}
 	}
 
-	private void displacePolygon(DataSet data, MultiPolygon selectedMultiPolygon) {
+	private static void displacePolygon(DataSet data, MultiPolygon selectedMultiPolygon) {
 		// Get all background polygons with allowed tags
 		List<MultiPolygon> backgroundPolygons = QueryUtils.getUnselectedMultiPolygons(data, p -> {
-			return hasValidTag(p);
+			return tagSettings.isValid(p);
 		});
 
 		LOGGER.info("Found " + backgroundPolygons.size() + " background polygon candidates");
@@ -153,7 +137,7 @@ public class PolygonCutOutAction extends AreaAction {
 		}
 	}
 
-	private void doDisplacePolygon(DataSet data, MultiPolygon foreground, MultiPolygon background) {
+	private static void doDisplacePolygon(DataSet data, MultiPolygon foreground, MultiPolygon background) {
 		// Actually do the displacing and get a list of all new polygons.
 		Commands c = new Commands(data);
 		BetterPolygonSplitter m = new BetterPolygonSplitter(data);
@@ -197,7 +181,7 @@ public class PolygonCutOutAction extends AreaAction {
 				}
 
 				// If still part of other relations do not delete
-				Set<Relation> parentRelations = Way.getParentRelations(Collections.singleton(oldWay));
+				Set<Relation> parentRelations = OsmPrimitive.getParentRelations(Collections.singleton(oldWay));
 				if (parentRelations.size() > 0) {
 					// Does oldWay have inner as role for all parent relations
 					if (parentRelations.stream().allMatch(pr -> pr.getMembers().stream().anyMatch(rm -> rm.getMember() == oldWay && rm.hasRole("inner")))) {
@@ -222,7 +206,7 @@ public class PolygonCutOutAction extends AreaAction {
 		c.makeCommandSequence("Cutout polygon");
 	}
 
-	private void doCreateMultiPolygon(DataSet data, Commands c, MultiPolygon inner, MultiPolygon outer) {
+	private static void doCreateMultiPolygon(DataSet data, Commands c, MultiPolygon inner, MultiPolygon outer) {
 		
 		if (outer.hasRelation()) {
 			c.addInnerWayToPolygon(outer.getRelation(), inner.getOuterWay());
@@ -240,20 +224,6 @@ public class PolygonCutOutAction extends AreaAction {
 		}
 	}
 	
-	private boolean hasValidTag(OsmPrimitive object) {
-	    boolean hasDisallowedTags = false;
-	    boolean hasAllowedTags = false;
-		for (Entry<String, String> e : object.getKeys().entrySet()) {
-            if (disallowedTags.contains(e.getKey(), e.getValue())) {
-                hasDisallowedTags = true;
-            }
-            if (allowedTags.contains(e.getKey(), e.getValue())) {
-                hasAllowedTags = true;
-            }
-		}
-		return hasAllowedTags && !hasDisallowedTags;
-	}
-
 	@Override
 	protected void updateEnabledState() {
 		updateEnabledStateOnCurrentSelection();
@@ -270,7 +240,7 @@ public class PolygonCutOutAction extends AreaAction {
 					if (o instanceof Way) {
 //						Way w = (Way) o;
 //						if (w.isClosed()) {
-							return true;
+							return true; 
 //						}
 					}
 					
