@@ -11,7 +11,7 @@ repositories {
 //  maven { url "http://jcenter.bintray.com"}
 }
 
-version = 'v0.7.2'
+version = 'v0.7.3'
 archivesBaseName = 'PolygonCutOut'
 josm {
   josmCompileVersion = '18622'
@@ -43,5 +43,6 @@ dependencies {
 }
 
 jar {
-    from configurations.runtimeClasspath.filter { it.isDirectory() ? it : zipTree(it) }
+// from configurations.runtimeClasspath.filter { it.isDirectory() ? it : zipTree(it) }
 }
+

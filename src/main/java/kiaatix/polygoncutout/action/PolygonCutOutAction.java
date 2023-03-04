@@ -31,8 +31,6 @@ public class PolygonCutOutAction extends AreaAction {
 
 	private static final Logger LOGGER = Logger.getLogger(PolygonCutOutAction.class.getName());
 
-//	private static TagSet allowedTags = new TagSet();
-//	private static TagSet disallowedTags = new TagSet();
 	private static final TagSettings tagSettings;
 
 	static {
